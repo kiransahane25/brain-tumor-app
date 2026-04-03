@@ -3,7 +3,22 @@ import sqlite3
 import cv2
 import numpy as np
 import json
+import gdown
+import os
+
+# ---------------- FIX TENSORFLOW INSTALL ----------------
+if not os.path.exists("tf_installed.txt"):
+    os.system("pip install tensorflow-cpu==2.12.0")
+    open("tf_installed.txt", "w").close()
+
 from tensorflow.keras.models import load_model
+
+# ---------------- DOWNLOAD MODELS ----------------
+if not os.path.exists("model.h5"):
+    gdown.download("https://drive.google.com/uc?id=1b74HEfoR66sNZfkqnVZELV6-zT4LtAvy", "model.h5", quiet=False)
+
+if not os.path.exists("mri_model.h5"):
+    gdown.download("https://drive.google.com/uc?id=10rZ1Kdsdwb-QhwTvgBuJf3yOV8ChVfCO", "mri_model.h5", quiet=False)
 
 # ---------------- LOAD MODELS ----------------
 mri_model = load_model("mri_model.h5")
@@ -13,12 +28,13 @@ tumor_model = load_model("model.h5")
 with open("mri_class_indices.json", "r") as f:
     class_indices = json.load(f)
 
-# MRI label (here: mri = 0)
-mri_label = class_indices["mri"]
-
 # ---------------- DATABASE ----------------
 conn = sqlite3.connect("users.db")
 c = conn.cursor()
+
+c.execute("CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)")
+c.execute("CREATE TABLE IF NOT EXISTS history (username TEXT, result TEXT)")
+conn.commit()
 
 # ---------------- SESSION ----------------
 if "logged_in" not in st.session_state:
@@ -97,7 +113,6 @@ if st.session_state.logged_in:
 
         st.write("MRI Score:", value)
 
-        # 🔥 FINAL CORRECT LOGIC
         if value < 0.5:
             st.success("✅ Valid MRI Image")
 
@@ -122,7 +137,6 @@ if st.session_state.logged_in:
 
             st.write("Confidence:", float(prediction[0][0]))
 
-            # Save history
             c.execute("INSERT INTO history VALUES (?,?)", (st.session_state.username, result))
             conn.commit()
 
