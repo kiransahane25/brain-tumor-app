@@ -1,4 +1,6 @@
 streamlit
 opencv-python-headless
-numpy
+numpy==1.26.4
 gdown
+h5py
+keras
