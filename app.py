@@ -6,12 +6,8 @@ import json
 import gdown
 import os
 
-# ---------------- FIX TENSORFLOW INSTALL ----------------
-if not os.path.exists("tf_installed.txt"):
-    os.system("pip install tensorflow-cpu==2.12.0")
-    open("tf_installed.txt", "w").close()
-
-from tensorflow.keras.models import load_model
+# ---------------- LOAD MODEL (KERAS FIX) ----------------
+from keras.models import load_model
 
 # ---------------- DOWNLOAD MODELS ----------------
 if not os.path.exists("model.h5"):
