@@ -4,6 +4,12 @@ import cv2
 import numpy as np
 import gdown
 import os
+
+# ---------------- FIX: INSTALL TFLITE AT RUNTIME ----------------
+if not os.path.exists("tflite_installed.txt"):
+    os.system("pip install tflite-runtime")
+    open("tflite_installed.txt", "w").close()
+
 import tflite_runtime.interpreter as tflite
 
 # ---------------- DOWNLOAD MODELS ----------------
@@ -22,7 +28,7 @@ def load_model(path):
 mri_interpreter = load_model("mri_model.tflite")
 tumor_interpreter = load_model("model.tflite")
 
-# ---------------- PREDICT FUNCTION ----------------
+# ---------------- PREDICTION FUNCTION ----------------
 def predict(interpreter, image):
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
@@ -85,7 +91,7 @@ elif choice == "Login":
         else:
             st.error("Invalid Credentials")
 
-# ---------------- MAIN ----------------
+# ---------------- MAIN APP ----------------
 if st.session_state.logged_in:
     st.title("🧠 Brain Tumor Detection System")
 
