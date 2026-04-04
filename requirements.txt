@@ -1,5 +1,5 @@
-streamlit
+streamlit==1.32.0
+numpy==1.26.4
 opencv-python-headless==4.8.1.78
-numpy
-gdown
-tflite-runtime
+gdown==5.1.0
+tflite-runtime==2.14.0
